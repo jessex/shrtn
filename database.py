@@ -1,7 +1,7 @@
 import sqlite3 as sql
 
 LOCATION = "shrtn/db"
-MYTABLE = "urls"
+MYTABLE = "urls" #table name is case-sensitive
 
 def setup_sql():
 	"""Establishes a connection to the sqlite database at LOCATION and returns 
@@ -9,8 +9,8 @@ def setup_sql():
 	try:
 		conn = sql.connect(LOCATION)
 		return conn
-	except sql.OperationalError:
-		print "Error: could not open database file"
+	except sqlite3.OperationalError:
+		print "Error: could not open database file at '%s'" % LOCATION
 		return None
 
 def table_exists(table, conn):
@@ -20,6 +20,43 @@ def table_exists(table, conn):
 	return not (not result.fetchall()) #False if does not exist, True otherwise
 
 def create_table(table, conn):
-	pass
+	"""Attempts to create table in the database at conn. Returns whether or not
+	the insert was successful."""
+	query = 'create table %s (id INTEGER PRIMARY KEY, original TEXT)' % table
+	try:
+		conn.execute(query)
+		conn.commit() #save changes
+		return True
+	except sqlite3.OperationalError:
+		print "Error: table '%s' already exists" % table
+		return False
 
-
+def search_url(url, table, conn):
+	"""Attempts to find a row in the table in the database conn with the given
+	url. Returns its id value if it is present, returns False otherwise."""
+	query = 'select * from %s where original="%s"' % (table, url)
+	result = conn.execute(query).fetchall()
+	if not result: #url not in our database, return False
+		return False
+	else:
+		return result[0][0] #return the id of the url
+	
+def search_id(id, table, conn):
+	"""Attempts to find a row in the table in the database conn with the given
+	id. Returns its url value if it is present, returns False otherwise."""
+	query = 'select * from %s where id=%d' % (table, id)
+	result = conn.execute(query).fetchall()
+	if not result: #id not in our database, return False
+		return False
+	else:
+		return str(result[0][1]) #return the url of the id
+		
+def insert_url(url, table, conn):
+	"""Inserts the url into the table in the database conn. """
+	query = 'insert into %s values(NULL, "%s")' % (table, url)
+	c = conn.cursor() #create cursor for this statement so we can get lastrowid
+	c.execute(query)
+	conn.commit()
+	c.close() #close this cursor, no longer needed
+	return c.lastrowid #autoincremented id of the just inserted row
+		
