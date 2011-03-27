@@ -1,7 +1,9 @@
 import sqlite3 as sql
 
-LOCATION = "shrtn/db"
+LOCATION = "shrtn/db" #location of database file
 MYTABLE = "urls" #table name is case-sensitive
+
+# ****************************** SETUP FUNCTIONS *******************************
 
 def setup_sql():
 	"""Establishes a connection to the sqlite database at LOCATION and returns 
@@ -30,6 +32,8 @@ def create_table(table, conn):
 	except sqlite3.OperationalError:
 		print "Error: table '%s' already exists" % table
 		return False
+		
+# ******************************* CORE FUNCTIONS *******************************
 
 def search_url(url, table, conn):
 	"""Attempts to find a row in the table in the database conn with the given
