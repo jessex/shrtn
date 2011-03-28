@@ -29,11 +29,9 @@ def standardize_url(url):
 	Returns None if the url is somehow invalid.
 	"""
 	if is_valid_short(url): #will not shorten one of our already shortened URLs
-		print "ho"
 		return None
 	parts = urlparse(url, "http") #default scheme is http if omitted
 	if parts[0] != "http" and parts[0] != "https": #scheme was not http(s)
-		print "he"
 		return None
 	
 	#url appears valid at this point, proceed with standardization
