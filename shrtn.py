@@ -4,7 +4,7 @@ from urlparse import urlparse
 
 ALPHABET = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789" #no oO0lI1
 OURDOMAIN = "http://shr.tn/" #our imaginary domain for our imaginary site
-re_short = re.compile(OURDOMAIN + "[a-zA-Z0-9]+") #RE for matching our URLs
+re_short = re.compile(OURDOMAIN + "[a-kmnp-zA-HJ-NP-Z2-9]+$") #matches our URLs
 re_end = re.compile("[.][^/]+$") #for checking the end of a url
 
 # ****************************** HELPER FUNCTIONS ******************************
@@ -20,27 +20,35 @@ def setup_db():
 	return conn
 
 def is_valid_short(url):
-	"""Takes in a url and determines if it is a valid shortened url."""
-	match = re_short.match(url)
-	if match != None: #matches from start
-		return match.end() == len(url) #if it also matches up to end
-	return False #does not match from start
+    """Takes in a url and determines if it is a valid shortened url."""
+    return not (not re_short.match(url))
 	
 def standardize_url(url):
 	"""Takes in a url and returns a clean, consistent format. For example:
-	apple.com, http://apple.com, apple.com/ all become http://apple.com/
+	example.com, http://example.com, example.com/ all are http://example.com/
+	Returns None if the url is somehow invalid.
 	"""
 	if is_valid_short(url): #will not shorten one of our already shortened URLs
+		print "ho"
 		return None
 	parts = urlparse(url, "http") #default scheme is http if omitted
-	if parts[0] != "http": #scheme was entered and was not http
+	if parts[0] != "http" and parts[0] != "https": #scheme was not http(s)
+		print "he"
 		return None
+	
+	#url appears valid at this point, proceed with standardization
 	standard = parts.geturl()
-	if standard.startswith("http:///"): #work-around for bug in urlparse
+	#work-around for bug in urlparse
+	if standard.startswith("http:///") or standard.startswith("https:///"):
 		standard = standard.replace("///", "//", 1) #get rid of extra slash
 	if not standard.endswith("/"): #does not end with '/'...
-		if re_end.findall(standard): #... but does end with a '.something'
-			return standard + "/" #append a '/'
+		if re_end.findall(standard): #...but ends with .something...
+			if parts[0] == "http":
+				bound = 7
+			elif parts[0] == "https":
+				bound = 8
+			if standard.rfind("/", bound) == -1: #...and contains no other '/'
+				return standard + "/" #append a '/'
 	return standard
 	
 	
@@ -49,7 +57,7 @@ def standardize_url(url):
 def shorten_url(url, conn):
 	"""Takes in a standard url and returns a shortened version."""
 	url = standardize_url(url)
-	if url == None: #tried to shorten invalid url
+	if url is None: #tried to shorten invalid url
 		return None
 	
 	#get the id for this url (whether new or otherwise)
@@ -97,4 +105,3 @@ def resolve_to_id(code, alphabet=ALPHABET):
     for i in range(0, size): #convert from higher base back to decimal
         id += alphabet.index(code[i]) * (base ** (size-i-1))
     return id
-
