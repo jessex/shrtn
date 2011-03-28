@@ -1,9 +1,11 @@
 import database as db
 import sys, re
+from urlparse import urlparse
 
 ALPHABET = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789" #no oO0lI1
 OURDOMAIN = "http://shr.tn/" #our imaginary domain for our imaginary site
 re_short = re.compile(OURDOMAIN + "[a-zA-Z0-9]+") #RE for matching our URLs
+re_end = re.compile("[.][^/]+$") #for checking the end of a url
 
 # ****************************** HELPER FUNCTIONS ******************************
 
@@ -24,11 +26,31 @@ def is_valid_short(url):
 		return match.end() == len(url) #if it also matches up to end
 	return False #does not match from start
 	
+def standardize_url(url):
+	"""Takes in a url and returns a clean, consistent format. For example:
+	apple.com, http://apple.com, apple.com/ all become http://apple.com/
+	"""
+	if is_valid_short(url): #will not shorten one of our already shortened URLs
+		return None
+	parts = urlparse(url, "http") #default scheme is http if omitted
+	if parts[0] != "http": #scheme was entered and was not http
+		return None
+	standard = parts.geturl()
+	if standard.startswith("http:///"): #work-around for bug in urlparse
+		standard = standard.replace("///", "//", 1) #get rid of extra slash
+	if not standard.endswith("/"): #does not end with '/'...
+		if re_end.findall(standard): #... but does end with a '.something'
+			return standard + "/" #append a '/'
+	return standard
+	
+	
 # ******************************* CORE FUNCTIONS *******************************
 
 def shorten_url(url, conn):
 	"""Takes in a standard url and returns a shortened version."""
-	#standardize the url into a clean, consistent format
+	url = standardize_url(url)
+	if url == None: #tried to shorten invalid url
+		return None
 	
 	#get the id for this url (whether new or otherwise)
 	id = db.search_url(url, db.MYTABLE, conn)
@@ -61,7 +83,7 @@ def convert_to_code(id, alphabet=ALPHABET):
     chars = []
     while id:
     	chars.append(alphabet[id % base])
-        id = id // base
+        id //= base
     chars.reverse() #moved right to left, so reverse order
     return ''.join(chars) #convert stored characters to single string
 	
