@@ -56,11 +56,14 @@ def search_id(id, table, conn):
 		return str(result[0][1]) #return the url of the id
 		
 def insert_url(url, table, conn):
-	"""Inserts the url into the table in the database conn. """
+	"""Inserts the url into the table in the database conn and returns the id
+	of the row which was created by the insert.
+	"""
 	query = 'insert into %s values(NULL, "%s")' % (table, url)
 	c = conn.cursor() #create cursor for this statement so we can get lastrowid
 	c.execute(query)
 	conn.commit()
+	id = c.lastrowid #autoincremented id of the just inserted row
 	c.close() #close this cursor, no longer needed
-	return c.lastrowid #autoincremented id of the just inserted row
+	return id
 		
