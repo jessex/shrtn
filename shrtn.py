@@ -20,8 +20,8 @@ def setup_db():
 	return conn
 
 def is_valid_short(url):
-    """Takes in a url and determines if it is a valid shortened url."""
-    return not (not re_short.match(url))
+	"""Takes in a url and determines if it is a valid shortened url."""
+	return not (not re_short.match(url))
 	
 def standardize_url(url):
 	"""Takes in a url and returns a clean, consistent format. For example:
@@ -82,24 +82,24 @@ def lengthen_url(url, conn):
 def convert_to_code(id, alphabet=ALPHABET):
 	"""Converts a decimal id number into a shortened URL code. Use the id of the
 	row in the database with the entered long URL."""
-    if id <= 0: #invalid codes (autoincrement is always 1 or higher)
-        return alphabet[0]
-    
-    base = len(alphabet) #base to convert to (56 for our standard alphabet)
-    chars = []
-    while id:
-    	chars.append(alphabet[id % base])
-        id //= base
-    chars.reverse() #moved right to left, so reverse order
-    return ''.join(chars) #convert stored characters to single string
+	if id <= 0: #invalid codes (autoincrement is always 1 or higher)
+		return alphabet[0]
+	
+	base = len(alphabet) #base to convert to (56 for our standard alphabet)
+	chars = []
+	while id:
+		chars.append(alphabet[id % base])
+		id //= base
+	chars.reverse() #moved right to left, so reverse order
+	return ''.join(chars) #convert stored characters to single string
 	
 def resolve_to_id(code, alphabet=ALPHABET):
 	"""Converts the shortened URL code back to an id number in decimal form. Use
 	the id to query the database and lookup the long URL.
 	"""
-    base = len(alphabet)
-    size = len(code)
-    id = 0
-    for i in range(0, size): #convert from higher base back to decimal
-        id += alphabet.index(code[i]) * (base ** (size-i-1))
-    return id
+	base = len(alphabet)
+	size = len(code)
+	id = 0
+	for i in range(0, size): #convert from higher base back to decimal
+		id += alphabet.index(code[i]) * (base ** (size-i-1))
+	return id
