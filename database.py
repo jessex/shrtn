@@ -11,7 +11,7 @@ def setup_sql():
 	try:
 		conn = sql.connect(LOCATION)
 		return conn
-	except sqlite3.OperationalError:
+	except sql.OperationalError:
 		print "Error: could not open database file at '%s'" % LOCATION
 		return None
 
@@ -29,7 +29,7 @@ def create_table(table, conn):
 		conn.execute(query)
 		conn.commit() #save changes
 		return True
-	except sqlite3.OperationalError:
+	except sql.OperationalError:
 		print "Error: table '%s' already exists" % table
 		return False
 		
