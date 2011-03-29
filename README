@@ -45,7 +45,7 @@ With regards to the "URL standardization," more work can be done. At present,
 it accepts URLs as obviously invalid as "a/bc". The methodology is to take in a 
 URL, check that it is not one of our shortened URLs, check that its scheme is 
 either HTTP or HTTPS and then run it into the urlparse module in Python. This 
-is then re-extracted and place a "/" at the end of the path if deemed 
+is then re-extracted and a "/" is placed at the end of the path if deemed 
 necessary, so that a URL like "example.com" will become "http://example.com/". 
 As already mentioned, some obviously invalid URLs will be allowed. Also, this 
 draws a distinction between "www.example.com" and "example.com" which for some 
