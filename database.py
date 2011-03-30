@@ -1,18 +1,18 @@
 import sqlite3 as sql
 
-LOCATION = "shrtn/db" #location of database file
+MYLOCATION = "shrtn/db" #location of database file
 MYTABLE = "urls" #table name is case-sensitive
 
 # ****************************** SETUP FUNCTIONS *******************************
 
-def setup_sql():
-	"""Establishes a connection to the sqlite database at LOCATION and returns 
+def setup_sql(location):
+	"""Establishes a connection to the sqlite database at location and returns 
 	the database connection object."""
 	try:
-		conn = sql.connect(LOCATION)
+		conn = sql.connect(location)
 		return conn
 	except sql.OperationalError:
-		print "Error: could not open database file at '%s'" % LOCATION
+		print "Error: could not open database file at '%s'" % location
 		return None
 
 def table_exists(table, conn):
@@ -29,7 +29,7 @@ def create_table(table, conn):
 		conn.execute(query)
 		conn.commit() #save changes
 		return True
-	except sql.OperationalError:
+	except sql.OperationalError: #sql and not sqlite3 because of our namespace
 		print "Error: table '%s' already exists" % table
 		return False
 		
@@ -57,13 +57,8 @@ def search_id(id, table, conn):
 		
 def insert_url(url, table, conn):
 	"""Inserts the url into the table in the database conn and returns the id
-	of the row which was created by the insert.
-	"""
+	of the row which was created by the insert."""
 	query = 'insert into %s values(NULL, "%s")' % (table, url)
-	c = conn.cursor() #create cursor for this statement so we can get lastrowid
-	c.execute(query)
-	conn.commit()
-	id = c.lastrowid #autoincremented id of the just inserted row
-	c.close() #close this cursor, no longer needed
-	return id
+	c = conn.execute(query)
+	return c.lastrowid #autoincremented id of the just inserted row
 		
