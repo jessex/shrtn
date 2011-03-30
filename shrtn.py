@@ -12,7 +12,7 @@ re_end = re.compile("[.][^/]+$") #for checking the end of a url
 def setup_db():
 	"""Establishes a connection to our database and creates our url table if it
 	does not yet exist. Returns the connection to the database file."""
-	conn = db.setup_sql()
+	conn = db.setup_sql(db.MYLOCATION)
 	if conn == None: #Could not establish connection, so quit
 		sys.exit()
 	if not db.table_exists(db.MYTABLE, conn): #create table if not yet created
@@ -26,8 +26,7 @@ def is_valid_short(url):
 def standardize_url(url):
 	"""Takes in a url and returns a clean, consistent format. For example:
 	example.com, http://example.com, example.com/ all are http://example.com/
-	Returns None if the url is somehow invalid.
-	"""
+	Returns None if the url is somehow invalid."""
 	if is_valid_short(url): #will not shorten one of our already shortened URLs
 		return None
 	parts = urlparse(url, "http") #default scheme is http if omitted
@@ -95,8 +94,7 @@ def convert_to_code(id, alphabet=ALPHABET):
 	
 def resolve_to_id(code, alphabet=ALPHABET):
 	"""Converts the shortened URL code back to an id number in decimal form. Use
-	the id to query the database and lookup the long URL.
-	"""
+	the id to query the database and lookup the long URL."""
 	base = len(alphabet)
 	size = len(code)
 	id = 0
