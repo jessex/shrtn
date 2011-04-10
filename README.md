@@ -40,8 +40,8 @@ to quickly run the testing script.
 ## Deficiencies
 
 The database can only accept up to 9,223,372,036,854,775,808 unique URLs due to 
-the fact that the largest possible integer key is 9,223,372,036,854,775,807. 
-However, this seems to be big enough. :)
+the fact that this is the largest possible integer key. However, this seems to be 
+big enough. :)
 
 With regards to the "URL standardization," more work can be done. At present, 
 it accepts URLs as obviously invalid as "a/bc". The methodology is to take in a 
