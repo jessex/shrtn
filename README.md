@@ -39,7 +39,7 @@ to quickly run the testing script.
 
 ## Deficiencies
 
-The database can only accept up to 9,223,372,036,854,775,808 unique URLs due to 
+The database can only accept up to 9,223,372,036,854,775,807 unique URLs due to 
 the fact that this is the largest possible integer key. However, this seems to be 
 big enough. :)
 
