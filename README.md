@@ -54,7 +54,7 @@ draws a distinction between www.example.com and example.com which for some
 URLs might be unwanted. 
 
 I attempted to use John Gruber's URL validation regex at 
-<a href="http://daringfireball.net/2009/11/liberal_regex_for_matching_urls">Daring Fireball. 
+<a href="http://daringfireball.net/2009/11/liberal_regex_for_matching_urls">Daring Fireball</a>. 
 However, it turned away some URLs for me which I would prefer included and I did 
 not feel like messing with it too much. I may revisit this in the future.
 
