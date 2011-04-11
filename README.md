@@ -14,6 +14,8 @@ id of that insert to generate a code. This code is found by doing a simple base
 conversion based on the amount of characters eligible for our shortened URL 
 codes. The output is the handy, convenient, (and hopefully shiny) new short URL!
 
+For more information on implementation and all that jazz, check out <a href="http://essexj.posterous.com/writing-a-url-shortener-in-python">this post</a> where I walk-through the system.
+
 ## Instructions
 
 shrtn.py contains the core logic of the actual shortening engine while the 
